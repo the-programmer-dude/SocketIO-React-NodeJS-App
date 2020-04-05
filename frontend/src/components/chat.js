@@ -22,7 +22,11 @@ export const Chat = ({ currentState, logOut }) => {
         load()
     }, [currentState, history])
 
-    
+    if(window.performance) {
+        if(performance.navigation.type === 1) {
+            setError({ error: false, status: 200 })
+        }
+    }
 
     return (
         <>
