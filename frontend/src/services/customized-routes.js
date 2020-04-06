@@ -1,53 +1,42 @@
-import React, { useState, useEffect } from 'react'
-import { connect } from 'react-redux'
+import React from 'react'
 import {
     Route,
     useHistory
 } from 'react-router-dom'
+import { key } from '../json/key.json'
 
-const Config = ({ component: Component, currentState, ...rest }) => {
-    const [ReducerData, setReducerData] = useState({})
+export const ChatRoute = ({ component: Component, location, ...rest }) => {
+    const ReducerData = JSON.parse(localStorage.getItem(key))
     const history = useHistory()
     const msgObj = { message: 'You need to create an user to use our chat', success: false }
 
-    useEffect(() => {
-        async function solveState() {
-            const response = await currentState
-            setReducerData(response)
-        }
-        solveState()
-    }, [currentState])
-
-    const currentStateValidator = ReducerData.message === null || ReducerData.error || ReducerData.action === 'delete'
-    console.log(ReducerData)
+    const currentStateValidator = ReducerData.message === null || ReducerData.error && ReducerData.action === 'delete' 
+    const currentStateValidator2 = ReducerData.action === 'delete' && ReducerData.status === 200 && !ReducerData.error
+    const msgObj2 = { message: ReducerData.message, success: true }
     return (
         <Route {...rest} render={props => (
-            currentStateValidator ? 
+            currentStateValidator && location.alert !== 'logged' ? 
             (
                 history.push('/user', msgObj)
             ) : (
-                <Component {...props} />
+                currentStateValidator2 && location.alert !== 'logged'? (
+                    history.push('/user', msgObj2)
+                ) : (
+                    <Component {...props} />
+                )
             )
         )}/>
     )
 }
 
-const Config2 = ({ component: Component, currentState, ...rest }) => {
+export const LoginRoute = ({ component: Component, ...rest }) => {
     const history = useHistory()
-    const [reducerData, setReducerData] = useState({})
+    const reducerData = JSON.parse(localStorage.getItem(key))
 
-    useEffect(() => {
-        async function solveState() {
-            const response = await currentState
-            setReducerData(response)
-        }
-        solveState()
-    }, [currentState])
-
-    const validator = reducerData.name === undefined && reducerData.action === 'add'
+    const validator = reducerData.name !== undefined && reducerData.action === 'add' && reducerData.status === 200
     return (
         <Route {...rest} render={props => (
-            validator ? (
+            !validator ? (
                 <Component {...props} />
             ) : (
                 history.push('/chat', {
@@ -58,9 +47,6 @@ const Config2 = ({ component: Component, currentState, ...rest }) => {
         )} />
     )
 }
-
-export const LoginRoute = connect(state => ({ currentState: state.userReducer }))(Config2)
-export const ChatRoute = connect(state => ({ currentState: state.userReducer }))(Config)
 
 export const NotFound = () => {
     const history = useHistory()

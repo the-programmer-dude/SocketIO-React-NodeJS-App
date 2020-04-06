@@ -1,16 +1,38 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useRef } from 'react'
 import axios from 'axios'
 import { connect } from 'react-redux'
+import { withLastLocation } from 'react-router-last-location';
 
 import Card from './user-components/card'
 import { addPlayerToChat } from '../store/actions'
+import { useHistory } from 'react-router-dom'
 
-export const User = ({ currentState, location, addPlayer }) => {
-    let { state } = location    
-
+export const User = ({ currentState, location, dispatch, lastLocation }) => {
+    const [state, setState] = useState(location.state)
     const [ reducerData, setReducerData ] = useState(currentState)
     const [ inptValue, setInptValue ] = useState('')
     const [ repos, setRepos ] = useState([])
+
+    const itemsRef = useRef()
+    const history = useHistory()
+
+    useEffect(() => {
+        if(state && !lastLocation) {
+            if(state.message === "Sucessfully logged out" && state.success){
+                setState({
+                    success: false,
+                    message: ''
+                })
+                location.state = undefined
+            }else if(state.message === 'You need to create an user to use our chat' && !state.success){
+                setState({
+                    success: false,
+                    message: ''
+                })
+                location.state = undefined
+            }
+        }
+    }, [lastLocation, state, location.state ])
 
     useEffect(() => {
         async function solve() {
@@ -29,33 +51,45 @@ export const User = ({ currentState, location, addPlayer }) => {
         responseData()
     }, [])
 
-    if(window.performance) {
-        if(performance.navigation.type === 1) {
-            state = undefined
-        }
+    function handleButtonClick() {
+        dispatch(addPlayerToChat(inptValue))
+        history.push('/chat', {
+            alert: 'logged'
+        })
     }
+    
+    setTimeout(() => {
+        if(itemsRef.current) {
+            const e = itemsRef.current
+            let child = e.lastElementChild
+            while(child) {
+                e.remove(child)
+                child = e.lastElementChild
+            }
+        }
+    }, 2000);
 
     return (
         <>
-            <>
-                { state ? (
-                    <>
-                        { !state.success ? (
-                            <div className="alert alert-danger">{state.message}</div>
-                        ) : (
-                            <div className="alert alert-success">{state.message}</div>
-                        ) }
-                    </>
-                ) : null }   
+            <div className="container" ref={itemsRef}>
+            { state && state.message !== '' ? (
+                <>
+                    { !state.success ? (
+                        <div className="alert alert-danger">{state.message}</div>
+                    ) : (
+                        <div className="alert alert-success">{state.message}</div>
+                    ) }
+                </>
+            ) : null }   
 
                 { reducerData.error ? (
                     <div className="alert alert-danger">{reducerData.message}</div>
                 ) : null }
-            </>
+            </div>
 
             <div className="card p-3 mt-2">
                 <input type="text" value={inptValue} onChange={e => setInptValue(e.target.value)}/>
-                <button className="btn btn-success mt-4" onClick={() => addPlayer(inptValue)}>Register</button>
+                <button className="btn btn-success mt-4" onClick={handleButtonClick}>Register</button>
             </div>
             
             <div className="row row-cols-1 row-cols-md-2 card-body w-100 container row d-flex justify-content-center">
@@ -67,12 +101,10 @@ export const User = ({ currentState, location, addPlayer }) => {
     )
 }
 
+const ELEMENT = withLastLocation(User)
+
 const mapStateToProps = (state) => ({
     currentState: state.userReducer
 })
 
-const mapDispatchToProps = dispatch => ({
-    addPlayer: inptValue => dispatch(addPlayerToChat(inptValue))
-})
-
-export default connect(mapStateToProps, mapDispatchToProps)(User)
+export default connect(mapStateToProps)(ELEMENT)

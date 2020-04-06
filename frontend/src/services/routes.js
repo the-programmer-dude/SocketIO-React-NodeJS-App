@@ -4,6 +4,7 @@ import {
     Route,
     BrowserRouter,
 } from 'react-router-dom'
+import { LastLocationProvider } from 'react-router-last-location';
 
 import ChatOnline from '../components/chat'
 import User from '../components/user'
@@ -13,12 +14,14 @@ import { NotFound, ChatRoute, LoginRoute } from './customized-routes'
 export default function RouteConfig() {
     return (   
         <BrowserRouter>
-            <Switch>
-                <Route exact path="/" component={Homepage}/>
-                <LoginRoute exact path="/user" component={User}/>
-                <ChatRoute exact path="/chat" component={ChatOnline}/>
-                <NotFound />
-            </Switch>
+            <LastLocationProvider>
+                <Switch>
+                    <Route exact path="/" component={Homepage}/>
+                    <LoginRoute exact path="/user" component={User}/>
+                    <ChatRoute exact path="/chat" component={ChatOnline}/>
+                    <NotFound />
+                </Switch>
+            </LastLocationProvider>
         </BrowserRouter>
     )
 }

@@ -20,19 +20,21 @@ Router.put('/user', (req, res) => {
         return res.json({ message: 'Someone is using the same name(409 conflict)', status: 409, error: true, action: 'none' })
     }
 
+    console.log(user.users)
     return res.json({ status: 200 ,name, error: false, action: 'add' })
 })
 
 Router.delete('/user/:name', (req, res) => {
     const { name } = req.params
-
     const index = user.users.indexOf({ name })
-    user.users.splice(index, 1)
-    if(!user.users[index] || user.users[index].name !== name) {
+
+    if(user.users[index] && user.users[index].name !== name) {
         return res.json({ status: 404, message: "This user don't exist", error: true, action: 'none' })
     }
+    user.users.splice(index, 1)
 
-    return res.json({ status: 200, message: 'Sucessfully deleted your user', error: false, action: 'delete' })
+    console.log(user.users)
+    return res.json({ status: 200, message: 'Sucessfully logged out', error: false, action: 'delete' })
 })
 
 module.exports = Router

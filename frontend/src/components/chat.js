@@ -3,7 +3,7 @@ import { connect } from 'react-redux'
 import { logOut } from '../store/actions'
 import { useHistory } from 'react-router-dom'
 
-export const Chat = ({ currentState, logOut }) => {
+export const Chat = ({ currentState, logOut, location }) => {
     const [ error, setError ] = useState({ error: false, status: 200 })
     const history = useHistory()
 
@@ -13,7 +13,7 @@ export const Chat = ({ currentState, logOut }) => {
             if(response.action === 'delete' && response.status === 200) {
                 history.push('/user', {
                     success: true,
-                    message: 'Logged out'
+                    message: response.message
                 })
             }else if(response.status === 404 && response.action === 'none'){
                 setError(response)
@@ -22,19 +22,13 @@ export const Chat = ({ currentState, logOut }) => {
         load()
     }, [currentState, history])
 
-    if(window.performance) {
-        if(performance.navigation.type === 1) {
-            setError({ error: false, status: 200 })
-        }
-    }
-
     return (
         <>
         { error && error.status !== 200 ? (
             <div className="alert alert-danger">{error.message}</div>
         ) : null }
         <h1>Welcome to the chat</h1>
-        <button onClick={() => logOut(currentState.name)}>Log Out</button>
+        <button className="btn btn-success" onClick={() => logOut(currentState.name)}>Log Out</button>
         </>
     )
 }
