@@ -5,7 +5,6 @@ import { withLastLocation } from 'react-router-last-location';
 
 import Card from './user-components/card'
 import { addPlayerToChat } from '../store/actions'
-import { useHistory } from 'react-router-dom'
 
 export const User = ({ currentState, location, dispatch, lastLocation }) => {
     const [state, setState] = useState(location.state)
@@ -14,23 +13,14 @@ export const User = ({ currentState, location, dispatch, lastLocation }) => {
     const [ repos, setRepos ] = useState([])
 
     const itemsRef = useRef()
-    const history = useHistory()
 
     useEffect(() => {
         if(state && !lastLocation) {
-            if(state.message === "Sucessfully logged out" && state.success){
-                setState({
-                    success: false,
-                    message: ''
-                })
-                location.state = undefined
-            }else if(state.message === 'You need to create an user to use our chat' && !state.success){
-                setState({
-                    success: false,
-                    message: ''
-                })
-                location.state = undefined
-            }
+            setState({
+                success: false,
+                message: ''
+            })
+            location.state = undefined
         }
     }, [lastLocation, state, location.state ])
 
@@ -53,9 +43,7 @@ export const User = ({ currentState, location, dispatch, lastLocation }) => {
 
     function handleButtonClick() {
         dispatch(addPlayerToChat(inptValue))
-        history.push('/chat', {
-            alert: 'logged'
-        })
+        
     }
     
     setTimeout(() => {

@@ -5,7 +5,7 @@ import {
 } from 'react-router-dom'
 import { key } from '../json/key.json'
 
-export const ChatRoute = ({ component: Component, location, ...rest }) => {
+export const ChatRoute = ({ component: Component, ...rest }) => {
     const ReducerData = JSON.parse(localStorage.getItem(key))
     const history = useHistory()
     const msgObj = { message: 'You need to create an user to use our chat', success: false }
@@ -15,11 +15,11 @@ export const ChatRoute = ({ component: Component, location, ...rest }) => {
     const msgObj2 = { message: ReducerData.message, success: true }
     return (
         <Route {...rest} render={props => (
-            currentStateValidator && location.alert !== 'logged' ? 
+            currentStateValidator ? 
             (
                 history.push('/user', msgObj)
             ) : (
-                currentStateValidator2 && location.alert !== 'logged'? (
+                currentStateValidator2 ? (
                     history.push('/user', msgObj2)
                 ) : (
                     <Component {...props} />
