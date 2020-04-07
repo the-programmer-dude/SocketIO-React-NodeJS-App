@@ -5,10 +5,11 @@ import {
 } from 'react-router-dom'
 import { key } from '../json/key.json'
 
-export const ChatRoute = ({ component: Component, ...rest }) => {
+export const ChatRoute = ({ component: Component, location,...rest }) => {
     const ReducerData = JSON.parse(localStorage.getItem(key))
     const history = useHistory()
     const msgObj = { message: 'You need to create an user to use our chat', success: false }
+    console.log(location)
 
     const currentStateValidator = ReducerData.message === null || ReducerData.error && ReducerData.action === 'delete' 
     const currentStateValidator2 = ReducerData.action === 'delete' && ReducerData.status === 200 && !ReducerData.error

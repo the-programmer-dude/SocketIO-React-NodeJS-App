@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef } from 'react'
 import axios from 'axios'
 import { connect } from 'react-redux'
 import { withLastLocation } from 'react-router-last-location';
+import { useHistory } from 'react-router-dom'
 
 import Card from './user-components/card'
 import { addPlayerToChat } from '../store/actions'
@@ -13,6 +14,7 @@ export const User = ({ currentState, location, dispatch, lastLocation }) => {
     const [ repos, setRepos ] = useState([])
 
     const itemsRef = useRef()
+    const history = useHistory()
 
     useEffect(() => {
         if(state && !lastLocation) {
@@ -43,7 +45,9 @@ export const User = ({ currentState, location, dispatch, lastLocation }) => {
 
     function handleButtonClick() {
         dispatch(addPlayerToChat(inptValue))
-        
+        history.push('/chat', {
+            alert: 'logged'
+        })
     }
     
     setTimeout(() => {
