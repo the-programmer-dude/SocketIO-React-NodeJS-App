@@ -2,24 +2,21 @@ import React, { useEffect, useState } from 'react'
 import { connect } from 'react-redux'
 import { logOut } from '../store/actions'
 import { useHistory } from 'react-router-dom'
+import { key } from '../json/key'
 
 export const Chat = ({ currentState, logOut, location }) => {
     const [ error, setError ] = useState({ error: false, status: 200 })
     const history = useHistory()
-
+    console.log(JSON.parse(localStorage.getItem(key)))
     useEffect(() => {
-        async function load() {
-            const response = await currentState
-            if(response.action === 'delete' && response.status === 200) {
-                history.push('/user', {
-                    success: true,
-                    message: response.message
-                })
-            }else if(response.status === 404 && response.action === 'none'){
-                setError(response)
-            }
+        if(currentState.action === 'delete' && currentState.status === 200) {
+            history.push('/user', {
+                success: true,
+                message: currentState.message
+            })
+        }else if(currentState.status === 404 && currentState.action === 'none'){
+            setError(currentState)
         }
-        load()
     }, [currentState, history])
 
     return (

@@ -3,38 +3,25 @@ import { api } from '../services/api'
 import { connectToServer } from '../services/socket'
 import { key } from '../json/key.json'
 
-var INITIAL_STATE = new Promise((res, rej) => {
-    return res({
-        message: null,
-        error: false
-    })
-})
+import { 
+    ADD_PLAYER_CHAT,
+    REMOVE_PLAYER_FROM_CHAT
+} from './actions'
+
+var INITIAL_STATE = {
+    message: null,
+    error: false
+}
 
 function userReducer(before = INITIAL_STATE, data) {
-    if(data.type === 'ADD_PLAYER_TO_CHAT') {
-        async function responsePlayer() {
-            const response = await api.put('/user', {
-                name: data.playername
-            })
-            localStorage.setItem(key, JSON.stringify(response.data))
-
-            return response.data 
-        }
-        
-        return responsePlayer()
-    }else if(data.type === 'REMOVE_PLAYER_FROM_CHAT') {
-        async function responsePlayer() {
-            const response = await api.delete(`/user/${data.playername}`)
-
-            localStorage.setItem(key, JSON.stringify({
-                message: null,
-                error: false
-            }))
-
-            return response.data
-        }
-
-        return responsePlayer()
+    const { type } = data
+    console.log(data.response)
+    if(type === ADD_PLAYER_CHAT) {
+        localStorage.setItem(key, JSON.stringify(data.response))
+        return data.response
+    }else if(type === REMOVE_PLAYER_FROM_CHAT) {
+        localStorage.setItem(key, JSON.stringify(INITIAL_STATE))
+        return data.response;
     }
     return before
 }
