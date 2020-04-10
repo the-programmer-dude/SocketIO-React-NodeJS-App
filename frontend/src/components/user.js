@@ -31,7 +31,7 @@ export const User = ({ dispatch, lastLocation }) => {
 
     function handleButtonClick() {
         PUT('/user', { name: inptValue })(dispatch)
-        history.push('/chat')
+        history.push('/chat', true)
     }
 
     return (

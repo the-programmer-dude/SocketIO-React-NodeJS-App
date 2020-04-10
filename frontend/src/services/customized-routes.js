@@ -4,18 +4,25 @@ import {
     useHistory
 } from 'react-router-dom'
 import { key } from '../json/key.json'
+import { stat } from 'fs'
 
 export const ChatRoute = ({ component: Component, location,...rest }) => {
+    const { state } = location
     const ReducerData = JSON.parse(localStorage.getItem(key))
     const history = useHistory()
 
-    const currentStateValidator = ReducerData.status === 'logged-out'
+    console.log(state !== true)
+    const currentStateValidator = ReducerData.status === 'logged-out' && state !== true
     return (
         <Route {...rest} render={props => (
             currentStateValidator ? (
                 history.push('/user')
-            ) : (
-                <Component {...props} />
+            ) : ( 
+                <>{state === true ? (
+                    <Component {...props} />
+                ) : (
+                    history.push('/user')
+                )}</> 
             )
         )}/>
     )
