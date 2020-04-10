@@ -5,22 +5,15 @@ import { withLastLocation } from 'react-router-last-location';
 import { useHistory } from 'react-router-dom'
 
 import Card from './user-components/card'
-import { addPlayerToChat } from '../store/actions'
+import { PUT } from '../services/fetch'
+import { key } from '../json/key'
 
 export const User = ({ currentState, location, dispatch, lastLocation }) => {
-    let { state } = location
-    console.log(!lastLocation)
+    const [ inptValue, setInptValue ] = useState('');
+    const [ repos, setRepos ] = useState([]);
+    const storage = JSON.parse(localStorage.getItem(key))
 
-    const [ inptValue, setInptValue ] = useState('')
-    const [ repos, setRepos ] = useState([])
-
-    const history = useHistory()
-
-    useEffect(() => {
-        if(!lastLocation) {
-            state = null
-        }
-    }, [state])
+    const history = useHistory();
 
     useEffect(() => {
         async function responseData(){
@@ -32,20 +25,22 @@ export const User = ({ currentState, location, dispatch, lastLocation }) => {
     }, [])
 
     function handleButtonClick() {
-        dispatch(addPlayerToChat(inptValue))
+        PUT('/user', { name: inptValue })(dispatch)
         history.push('/chat')
     }
 
     return (
         <>
             <div className="container error">
-                { state ? (
-                    state.success ? (
-                        <div className="alert alert-success">{state.message}</div>
+                    {!storage.error && storage.message !== undefined ? (
+                        <div className="alert alert-success">{storage.message}</div>
                     ) : (
-                        <div className="alert alert-danger">{state.message}</div>
-                    )
-                ) : null }
+                        <>
+                            {storage.error && storage.message !== undefined ? (
+                                <div className="alert alert-danger">{storage.message}</div>
+                            ) : null}
+                        </>
+                    )}
                 { currentState.error ? (
                     <div className="alert alert-danger">{currentState.message}</div>
                 ) : null }

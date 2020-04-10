@@ -17,7 +17,7 @@ Router.put('/user', (req, res) => {
             name
         })
     }else{
-        return res.json({ message: 'Someone is using the same name(409 conflict)', status: 409, error: true, action: 'none' })
+        return res.json({ message: 'Someone is using the same name(409 conflict)', status: 409, error: true, action: 'none', name })
     }
 
     console.log(user.users)
@@ -29,7 +29,7 @@ Router.delete('/user/:name', (req, res) => {
     const index = user.users.indexOf({ name })
 
     if(user.users[index] && user.users[index].name !== name) {
-        return res.json({ status: 404, message: "This user don't exist", error: true, action: 'none' })
+        return res.json({ status: 404, message: "This user don't exist", error: true, action: 'none', name })
     }
     user.users.splice(index, 1)
 
