@@ -8,12 +8,17 @@ import Card from './user-components/card'
 import { PUT } from '../services/fetch'
 import { key } from '../json/key'
 
-export const User = ({ currentState, location, dispatch, lastLocation }) => {
+export const User = ({ dispatch, lastLocation }) => {
     const [ inptValue, setInptValue ] = useState('');
     const [ repos, setRepos ] = useState([]);
     const storage = JSON.parse(localStorage.getItem(key))
 
     const history = useHistory();
+    useEffect(() => {
+        if(!lastLocation && !storage.name) {
+            localStorage.setItem(key, JSON.stringify({}))
+        }
+    }, [lastLocation, storage])
 
     useEffect(() => {
         async function responseData(){
@@ -41,9 +46,6 @@ export const User = ({ currentState, location, dispatch, lastLocation }) => {
                             ) : null}
                         </>
                     )}
-                { currentState.error ? (
-                    <div className="alert alert-danger">{currentState.message}</div>
-                ) : null }
             </div>
 
             <div className="card p-3 mt-2">
@@ -62,8 +64,4 @@ export const User = ({ currentState, location, dispatch, lastLocation }) => {
 
 const ELEMENT = withLastLocation(User)
 
-const mapStateToProps = (state) => ({
-    currentState: state.userReducer
-})
-
-export default connect(mapStateToProps)(ELEMENT)
+export default connect()(ELEMENT)

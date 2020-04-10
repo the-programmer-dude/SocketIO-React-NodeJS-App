@@ -9,28 +9,31 @@ var INITIAL_STATE = {
 }
 
 function userReducer(before = INITIAL_STATE, data) {
+    if(!localStorage.getItem(key)) {
+        localStorage.setItem(key, JSON.parse({}))
+    }
     const { type } = data
-    console.log(data)
+
     if(type === errors.ADD_PLAYER_CHAT) {
-        localStorage.setItem(key, JSON.stringify({ name: data.playername, error: false }))
+        localStorage.setItem(key, JSON.stringify({ name: data.playername, error: false, status: 'logged' }))
         return {
             error: false,
             alert: 'logged'
         }
     }else if(type === errors.REMOVE_PLAYER_FROM_CHAT) {
-        localStorage.setItem(key, JSON.stringify({ message: 'Logged out', error: false }))
+        localStorage.setItem(key, JSON.stringify({ message: 'Logged out', error: false, status: 'logged-out' }))
         return {
             error: false,
             alert: 'deleted'
         }
     }else if(type === errors.CONFLICT_409) {
-        localStorage.setItem(key, JSON.stringify({ message: 'Someone is using the same name on our room', error: true }))
+        localStorage.setItem(key, JSON.stringify({ message: 'Someone is using the same name on our room', error: true, status: null }))
         return { 
             error: true,
             alert: '409'
         }
     }else if(type === errors.NOT_FOUND_404) {
-        localStorage.setItem(key, JSON.stringify({ message: 'User not found', error: true }))
+        localStorage.setItem(key, JSON.stringify({ message: 'User not found', error: true, status: null }))
         return {
             error: true,
             alert: '404'
