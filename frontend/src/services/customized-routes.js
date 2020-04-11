@@ -18,11 +18,7 @@ export const ChatRoute = ({ component: Component, location,...rest }) => {
             currentStateValidator ? (
                 history.push('/user')
             ) : ( 
-                <>{state === true ? (
-                    <Component {...props} />
-                ) : (
-                    history.push('/user')
-                )}</> 
+                <Component {...props} /> 
             )
         )}/>
     )

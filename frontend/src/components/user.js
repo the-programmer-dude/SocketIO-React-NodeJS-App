@@ -31,9 +31,9 @@ export const User = ({ dispatch, lastLocation }) => {
 
     function handleButtonClick() {
         PUT('/user', { name: inptValue })(dispatch)
-        history.push('/chat', true)
+        history.push('/chat')
     }
-
+    console.log(storage.error)
     return (
         <>
             <div className="container error">
