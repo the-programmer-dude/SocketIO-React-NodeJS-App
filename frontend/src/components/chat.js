@@ -9,9 +9,16 @@ export const Chat = ({ currentState, dispatch }) => {
     const history = useHistory()
     const user = JSON.parse(localStorage.getItem(key))
 
-    if(currentState.error) {
+    if(currentState.error || JSON.stringify(user) === '{}') {
         history.push('/user')
     }
+
+    useEffect(() => {
+        const localstorageData = JSON.parse(localStorage.getItem(key))
+        if(localstorageData.status === 'logged-out' || localstorageData.error) {
+            history.push('/user')
+        } 
+    }, [user, history])
 
     useEffect(() => {
         if(currentState.alert === 'deleted') {
@@ -21,7 +28,8 @@ export const Chat = ({ currentState, dispatch }) => {
 
     return (
         <>
-        <h1>Welcome to the chat</h1>
+        <h3>Welcome to the chat, you are logged as '{user.name}'</h3>
+
         <button className="btn btn-success" onClick={() => { DELETE('/user', user.name)(dispatch); history.push('/user')} }>Log Out</button>
         </>
     )

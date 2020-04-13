@@ -4,15 +4,12 @@ import {
     useHistory
 } from 'react-router-dom'
 import { key } from '../json/key.json'
-import { stat } from 'fs'
 
-export const ChatRoute = ({ component: Component, location,...rest }) => {
-    const { state } = location
+export const ChatRoute = ({ component: Component,...rest }) => {
     const ReducerData = JSON.parse(localStorage.getItem(key))
     const history = useHistory()
 
-    console.log(state !== true)
-    const currentStateValidator = ReducerData.status === 'logged-out' && state !== true
+    const currentStateValidator = ReducerData.status === 'logged-out' 
     return (
         <Route {...rest} render={props => (
             currentStateValidator ? (
@@ -28,7 +25,7 @@ export const LoginRoute = ({ component: Component, ...rest }) => {
     const history = useHistory()
     const reducerData = JSON.parse(localStorage.getItem(key))
 
-    const validator = reducerData.name !== undefined && !reducerData.error
+    const validator = reducerData.name !== undefined && !reducerData.error && reducerData.status !== 'logged' && reducerData !== {}
     return (
         <Route {...rest} render={props => (
             !validator ? (

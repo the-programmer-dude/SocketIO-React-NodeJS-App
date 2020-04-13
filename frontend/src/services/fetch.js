@@ -6,16 +6,15 @@ export function PUT(route, data) {
         try {
             const json = await api.put(route, data)
             const { name } = json.data
-            console.log(name)
+            
             if (json.data.status === 200) {
                 dispatch(addPlayerToChat(name))
-            }
-            else if (json.data.status === 409) {
+            }else if (json.data.status === 409) {
                 dispatch(error409(name))
             }
         }
         catch (err) {
-            return console.error(err)
+            console.error(err)
         }
     }
 }
@@ -27,8 +26,7 @@ export function DELETE(route, param) {
             const { name } = json.data
             if (json.status === 404) {
                 dispatch(error404(name))
-            }
-            else if (json.status === 200) {
+            }else if (json.status === 200) {
                 dispatch(logOut(name))
             }
         }

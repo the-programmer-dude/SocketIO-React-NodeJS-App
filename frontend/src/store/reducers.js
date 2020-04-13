@@ -9,16 +9,19 @@ var INITIAL_STATE = {
 }
 
 function userReducer(before = INITIAL_STATE, data) {
+    console.log(before)
     if(!localStorage.getItem(key)) {
-        localStorage.setItem(key, JSON.parse({}))
+        localStorage.setItem(key, JSON.stringify({}))
     }
     const { type } = data
 
     if(type === errors.ADD_PLAYER_CHAT) {
-        localStorage.setItem(key, JSON.stringify({ name: data.playername, error: false, status: 'logged' }))
-        return {
-            error: false,
-            alert: 'logged'
+        if(data.playername) {
+            localStorage.setItem(key, JSON.stringify({ name: data.playername, error: false, status: 'logged' }))
+            return {
+                error: false,
+                alert: 'logged'
+            }
         }
     }else if(type === errors.REMOVE_PLAYER_FROM_CHAT) {
         localStorage.setItem(key, JSON.stringify({ message: 'Logged out', error: false, status: 'logged-out' }))

@@ -14,5 +14,5 @@ app.use(express.json())
 app.use(cors({ origin: 'http://localhost:3000' }))
 app.use(routes)
 
-const PORT = 9430
+const PORT = 9532
 server.listen(PORT, () => console.log(PORT))

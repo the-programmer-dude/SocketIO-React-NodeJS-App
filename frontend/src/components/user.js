@@ -1,20 +1,33 @@
 import React, { useState, useEffect } from 'react'
 import axios from 'axios'
 import { connect } from 'react-redux'
-import { withLastLocation } from 'react-router-last-location';
+import { withLastLocation } from 'react-router-last-location'
 import { useHistory } from 'react-router-dom'
 
 import Card from './user-components/card'
-import { PUT } from '../services/fetch'
 import { key } from '../json/key'
+import { PUT } from '../services/fetch'
 
 export const User = ({ dispatch, lastLocation }) => {
     const [ inptValue, setInptValue ] = useState('');
     const [ repos, setRepos ] = useState([]);
+    const [logged, setLoggedState] = useState(false)
+    const [ localErrors, setErrors ] = useState([])
+
+    const history = useHistory()
     const storage = JSON.parse(localStorage.getItem(key))
 
-    const history = useHistory();
+    if(storage.status === 'logged') {
+        history.push('/chat')
+    }
     useEffect(() => {
+        if(logged) {
+            window.location.reload(true)      
+        }
+    }, [logged])
+
+    useEffect(() => {
+        console.log(lastLocation)
         if(!lastLocation && !storage.name) {
             localStorage.setItem(key, JSON.stringify({}))
         }
@@ -29,23 +42,53 @@ export const User = ({ dispatch, lastLocation }) => {
         responseData()
     }, [])
 
-    function handleButtonClick() {
-        PUT('/user', { name: inptValue })(dispatch)
-        history.push('/chat')
+    function handleButtonClick(e) {
+        e.preventDefault()
+
+        const errors = []
+        if(inptValue.length < 4) {
+            errors.push("Your username is too small(min: 3)")
+        }
+        if(inptValue.length >= 20) {
+            errors.push("Your username is too big(max: 20)")
+        }
+        if(inptValue.includes(' ')) {
+            errors.push("You cannnot use blank spaces in your name")
+        }
+
+        if(errors.length === 0) {
+            PUT('/user', {name: inptValue})(dispatch)
+            setLoggedState(true)
+            setErrors([])
+        }else{
+            setErrors(errors) 
+        }
     }
-    console.log(storage.error)
+
+    if(performance.navigation.type === 1) {
+        if(storage.status === 'logged') {
+            history.push('/chat')
+        }
+        if(storage.error) {
+            localStorage.setItem(key, JSON.stringify({}))
+        }
+    }
+
     return (
         <>
             <div className="container error">
-                    {!storage.error && storage.message !== undefined ? (
-                        <div className="alert alert-success">{storage.message}</div>
-                    ) : (
-                        <>
-                            {storage.error && storage.message !== undefined ? (
-                                <div className="alert alert-danger">{storage.message}</div>
-                            ) : null}
-                        </>
-                    )}
+                {localErrors.map((error, index) => (
+                    <div className="alert alert-danger" key={index}>{error}</div>
+                ))}
+                {!storage.error && storage.message !== undefined ? (
+                    <div className="alert alert-success">{storage.message}</div>
+                ) : (
+                    <>
+                        {storage.error && storage.message !== undefined ? (
+                            <div className="alert alert-danger">{storage.message}</div>
+                        ) : null}
+                    </>
+                )}
             </div>
 
             <div className="card p-3 mt-2">
