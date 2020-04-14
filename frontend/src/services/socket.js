@@ -1,10 +1,13 @@
 import socket from 'socket.io-client'
-const io = socket('http://localhost:9430/', {
+export const io = socket('http://localhost:9532/', {
     autoConnect: false
 })
 
-export const connectToServer = () => {
-    io.connect()
+export const connectToServer = (name) => {
+    if(io.disconnected) {
+        io.io.opts.query = { name }
+        io.connect()
+    }
 }
 
 export const disconnectFromServer = () => {

@@ -9,7 +9,6 @@ var INITIAL_STATE = {
 }
 
 function userReducer(before = INITIAL_STATE, data) {
-    console.log(before)
     if(!localStorage.getItem(key)) {
         localStorage.setItem(key, JSON.stringify({}))
     }

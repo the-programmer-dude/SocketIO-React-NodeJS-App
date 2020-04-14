@@ -22,24 +22,22 @@ export const User = ({ dispatch, lastLocation }) => {
     }
     useEffect(() => {
         if(logged) {
-            window.location.reload(true)      
+            window.location.reload(true)
+            history.push('/chat') 
         }
-    }, [logged])
+    }, [logged, history])
 
     useEffect(() => {
-        console.log(lastLocation)
         if(!lastLocation && !storage.name) {
             localStorage.setItem(key, JSON.stringify({}))
         }
     }, [lastLocation, storage])
 
     useEffect(() => {
-        async function responseData(){
-            const response = await axios.get('https://api.github.com/users/leanonybr-7579/repos')
-
-            setRepos([ ...response.data ])
-        }
-        responseData()
+        axios.get('https://api.github.com/users/leanonybr-7579/repos')
+        .then(res => {
+            setRepos([...res.data])
+        })
     }, [])
 
     function handleButtonClick(e) {
@@ -59,7 +57,7 @@ export const User = ({ dispatch, lastLocation }) => {
         if(errors.length === 0) {
             PUT('/user', {name: inptValue})(dispatch)
             setLoggedState(true)
-            setErrors([])
+            setErrors([]) 
         }else{
             setErrors(errors) 
         }
