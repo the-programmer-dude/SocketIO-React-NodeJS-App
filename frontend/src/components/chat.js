@@ -6,6 +6,7 @@ import { connectToServer, disconnectFromServer, io } from '../services/socket'
 import { DELETE } from '../services/fetch'
 import { key } from '../json/key'
 import socketConf from './chat-components/socketHandler'
+import preventInspect from './chat-components/preventInspect'
 
 import './chat-components/style.css'
 
@@ -14,6 +15,7 @@ export const Chat = ({ currentState, dispatch }) => {
     const user = JSON.parse(localStorage.getItem(key))
 
     const chatBoxRef = useRef(false)
+    const reconnectRef = useRef(true)
     const [ inptValue, setValue ] = useState('')
 
     if(currentState.error || JSON.stringify(user) === '{}') {
@@ -52,6 +54,16 @@ export const Chat = ({ currentState, dispatch }) => {
         socketConf(chatBoxRef.current)
     }, [chatBoxRef])
 
+    useEffect(() => {
+        if(reconnectRef.current) {
+            if(chatBoxRef.current) {
+                if(chatBoxRef.current.children.length === 0) {
+                    reconnectRef.current.disabled = false
+                }
+            }
+        }
+    }, [reconnectRef, chatBoxRef])
+
     return (
         <>
         <h3 className="mb-sm-5">Welcome to the chat, you are logged as '{user.name}'</h3>
@@ -67,8 +79,9 @@ export const Chat = ({ currentState, dispatch }) => {
             />
             <button className="btn btn-success ml-3 send-button" onClick={handleSendMessage}>Send Message</button>
         </div>
+        <button ref={reconnectRef} disabled={true} className="btn btn-success">Reconnect</button>
 
-        <button className="btn btn-success mt-4" onClick={handleUserDisconnection}>Log Out</button>
+        <button className="btn btn-success" onClick={handleUserDisconnection}>Log Out</button>
         </>
     )
 }

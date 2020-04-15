@@ -5,6 +5,7 @@ exports.loadSocketIO = (server) => {
     const io = socketIO.listen(server)
 
     io.on('connection', socket => {
+        socket.setMaxListeners(100)
         const messages = []
         if(socket.handshake.query.name) {
             let { name } = socket.handshake.query

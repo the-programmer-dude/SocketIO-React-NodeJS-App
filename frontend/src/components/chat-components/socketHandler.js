@@ -3,7 +3,7 @@ import { io } from '../../services/socket'
 const allTheMessages = (array, element) => {
     array.map(text => {
         const p = document.createElement('p')
-        p.innerHTML = text
+        p.innerText = text
         element.appendChild(p)
     })
 }
